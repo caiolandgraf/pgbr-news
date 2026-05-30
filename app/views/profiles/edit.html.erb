@@ -1,0 +1,64 @@
+<% content_for :title, "Editar perfil" %>
+<% content_for :main_class, "max-w-2xl w-full" %>
+<% content_for :head do %>
+  <%= render "articles/markdown_styles" %>
+<% end %>
+
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Editar perfil</h1>
+    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+      <%= link_to "Ver perfil público", profile_path(@user), class: "text-emerald-600 hover:underline dark:text-emerald-400" %>
+    </p>
+  </header>
+
+  <%= form_with model: @user, url: profile_path(@user), method: :patch, class: "space-y-6" do |form| %>
+    <% if @user.errors.any? %>
+      <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/50 dark:text-red-200">
+        <p class="font-medium"><%= pluralize(@user.errors.count, "erro") %> impediram o salvamento:</p>
+        <ul class="mt-1 list-inside list-disc">
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="space-y-2">
+      <%= form.label :username, "Usuário", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <div class="flex overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+        <span class="flex items-center border-r border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800/50">@</span>
+        <%= form.text_field :username, required: true, class: "block w-full border-0 bg-transparent px-3 py-2.5 text-sm focus:outline-none focus:ring-0 dark:text-zinc-100" %>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <%= form.label :name, "Nome (opcional)", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <%= form.text_field :name, class: "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100" %>
+    </div>
+
+    <div class="space-y-2">
+      <%= form.label :email, "E-mail", class: "block text-sm font-medium text-zinc-700 dark:text-zinc-300" %>
+      <p class="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400">
+        <%= @user.email %>
+      </p>
+      <p class="text-xs text-zinc-500">O e-mail não pode ser alterado por aqui.</p>
+    </div>
+
+    <%= render "shared/markdown_field",
+        form: form,
+        field: :bio,
+        max_length: User::BIO_MAX_LENGTH,
+        label: "Bio",
+        compact: true,
+        hint: "Markdown suportado. Conte um pouco sobre você.",
+        required: false %>
+
+    <div class="flex flex-wrap justify-end gap-3 pt-2">
+      <%= link_to "Cancelar", profile_path(@user),
+          class: "rounded-lg px-4 py-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100" %>
+      <%= form.submit "Salvar perfil",
+          class: "cursor-pointer rounded-lg bg-emerald-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-500 transition-colors" %>
+    </div>
+  <% end %>
+</div>

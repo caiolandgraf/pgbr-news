@@ -1,0 +1,4 @@
+<nav class="mb-8 flex rounded-lg bg-zinc-200/80 p-1 dark:bg-zinc-800/80" aria-label="Autenticação">
+  <%= link_to "Entrar", login_path, class: auth_tab_class(:login) %>
+  <%= link_to "Criar conta", new_user_path, class: auth_tab_class(:signup) %>
+</nav>

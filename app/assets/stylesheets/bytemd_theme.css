@@ -1,0 +1,216 @@
+/* Integração com Primer (TabNews) + correções do bundle bytemd.css no dark */
+
+/* --- Layout (editor precisa de altura explícita; height:auto quebra o split) --- */
+.bytemd-editor-container [data-article-editor-target="mount"] {
+  display: block;
+  width: 100%;
+}
+
+.bytemd-editor-container .bytemd {
+  display: block !important;
+  width: 100% !important;
+  height: 30vh !important;
+  min-height: 360px !important;
+  max-height: 70vh;
+  border: none;
+  background: transparent;
+  color: var(--fgColor-default);
+}
+
+.bytemd-editor-container .bytemd-body {
+  height: calc(100% - 41px) !important;
+  min-height: calc(360px - 41px) !important;
+  overflow: hidden;
+}
+
+.bytemd-editor-container .bytemd-split .bytemd-editor,
+.bytemd-editor-container .bytemd-split .bytemd-preview {
+  width: 50% !important;
+  height: 100% !important;
+  box-sizing: border-box;
+}
+
+.bytemd-editor-container .bytemd-editor {
+  clip-path: none;
+}
+
+.bytemd-editor-container .bytemd-editor .CodeMirror,
+.bytemd-editor-container .bytemd .CodeMirror {
+  height: 100% !important;
+  min-height: 100% !important;
+  background-color: var(--bgColor-default) !important;
+}
+
+.bytemd-editor-container .bytemd-editor .CodeMirror:focus-within {
+  background-color: var(--bgColor-default) !important;
+}
+
+.bytemd-editor-container .bytemd-preview {
+  height: 100% !important;
+  overflow: auto;
+}
+
+.bytemd-editor-container .bytemd-editor .CodeMirror .CodeMirror-lines {
+  max-width: none;
+  margin: 0;
+  padding: 16px 0;
+}
+
+.bytemd-editor-container .bytemd-editor .CodeMirror pre.CodeMirror-line,
+.bytemd-editor-container .bytemd-editor .CodeMirror pre.CodeMirror-line-like {
+  padding: 0 1rem;
+}
+
+.bytemd-editor-container .bytemd-preview .markdown-body {
+  max-width: none;
+  padding: 16px 1rem;
+}
+
+/* Bio / campos compactos no perfil */
+.bytemd-editor-container--compact .bytemd {
+  height: 200px !important;
+  min-height: 200px !important;
+}
+
+.bytemd-editor-container--compact .bytemd-body {
+  min-height: calc(200px - 41px) !important;
+  height: calc(100% - 41px) !important;
+}
+
+/* Sobrescreve cores fixas do bytemd.css (bundle) */
+[data-color-mode="dark"] .bytemd,
+.dark .bytemd {
+  color: var(--fgColor-default) !important;
+  background-color: var(--bgColor-default) !important;
+  border-color: var(--borderColor-default) !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar,
+.dark .bytemd-toolbar {
+  background-color: var(--bgColor-muted) !important;
+  border-bottom-color: var(--borderColor-default) !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon,
+.dark .bytemd-toolbar-icon {
+  color: var(--fgColor-muted);
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon:hover,
+.dark .bytemd-toolbar-icon:hover {
+  background-color: var(--button-default-bgColor-hover) !important;
+  color: var(--fgColor-default);
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon-active,
+.dark .bytemd-toolbar-icon-active {
+  color: var(--fgColor-accent) !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon svg,
+.dark .bytemd-toolbar-icon svg {
+  fill: currentColor;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-tab,
+.dark .bytemd-toolbar-tab {
+  color: var(--fgColor-muted);
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-tab-active,
+.dark .bytemd-toolbar-tab-active {
+  color: var(--fgColor-accent) !important;
+}
+
+[data-color-mode="dark"] .bytemd-body,
+.dark .bytemd-body {
+  background-color: var(--bgColor-default) !important;
+}
+
+[data-color-mode="dark"] .bytemd .CodeMirror,
+.dark .bytemd .CodeMirror {
+  background-color: var(--codeMirror-bgColor, var(--bgColor-default)) !important;
+  color: var(--fgColor-default) !important;
+}
+
+[data-color-mode="dark"] .bytemd .CodeMirror-gutters,
+.dark .bytemd .CodeMirror-gutters {
+  background-color: var(--codeMirror-gutters-bgColor, var(--bgColor-muted)) !important;
+  border-right-color: var(--borderColor-default) !important;
+}
+
+[data-color-mode="dark"] .bytemd-editor .CodeMirror pre.CodeMirror-placeholder,
+.dark .bytemd-editor .CodeMirror pre.CodeMirror-placeholder {
+  color: var(--fgColor-muted) !important;
+}
+
+[data-color-mode="dark"] .bytemd-split .bytemd-preview,
+.dark .bytemd-split .bytemd-preview {
+  border-left-color: var(--borderColor-default) !important;
+}
+
+[data-color-mode="dark"] .bytemd-preview .markdown-body,
+.dark .bytemd-preview .markdown-body,
+[data-color-mode="dark"] .tabnews-markdown-viewer .markdown-body,
+.dark .tabnews-markdown-viewer .markdown-body {
+  background-color: var(--bgColor-default);
+  color: var(--fgColor-default);
+}
+
+[data-color-mode="dark"] .tippy-box[data-theme~="light-border"] > .tippy-backdrop,
+.dark .tippy-box[data-theme~="light-border"] > .tippy-backdrop {
+  background-color: var(--bgColor-default) !important;
+}
+
+/* highlight.js no preview (plugin-highlight) */
+[data-color-mode="dark"] .markdown-body pre,
+.dark .markdown-body pre {
+  background-color: var(--bgColor-muted) !important;
+  border: 1px solid var(--borderColor-default);
+}
+
+[data-color-mode="dark"] .markdown-body pre code.hljs,
+.dark .markdown-body pre code.hljs {
+  background: transparent !important;
+  color: var(--fgColor-default);
+}
+
+[data-color-mode="dark"] .markdown-body :not(pre) > code,
+.dark .markdown-body :not(pre) > code {
+  background-color: var(--bgColor-neutral-muted);
+  color: var(--fgColor-default);
+}
+
+[data-color-mode="dark"] .markdown-body a,
+.dark .markdown-body a {
+  color: var(--fgColor-accent);
+}
+
+[data-color-mode="dark"] .markdown-body table tr,
+.dark .markdown-body table tr {
+  background-color: var(--bgColor-default);
+  border-color: var(--borderColor-default);
+}
+
+[data-color-mode="dark"] .markdown-body table tr:nth-child(2n),
+.dark .markdown-body table tr:nth-child(2n) {
+  background-color: var(--bgColor-muted);
+}
+
+[data-color-mode="dark"] .markdown-body blockquote,
+.dark .markdown-body blockquote {
+  border-left-color: var(--borderColor-default);
+  color: var(--fgColor-muted);
+}
+
+[data-color-mode="dark"] .markdown-body hr,
+.dark .markdown-body hr {
+  background-color: var(--borderColor-default);
+  border-color: var(--borderColor-default);
+}
+
+/* Wrapper do formulário alinhado ao canvas GitHub dark */
+[data-color-mode="dark"] .bytemd-editor-container,
+.dark .bytemd-editor-container {
+  background-color: var(--bgColor-default);
+}

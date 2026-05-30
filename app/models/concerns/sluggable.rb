@@ -1,0 +1,13 @@
+module Sluggable
+  extend ActiveSupport::Concern
+
+  included do
+    before_validation :generate_slug, if: -> { slug.blank? }
+  end
+
+  private
+
+  def generate_slug
+    self.slug = title.parameterize
+  end
+end

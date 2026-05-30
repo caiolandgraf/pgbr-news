@@ -1,0 +1,18 @@
+<%= stylesheet_link_tag "bytemd", "bytemd_theme", "tabnews-editor", "tabnews-viewer", "hljs-github", "data-turbo-track": "reload" %>
+<link id="hljs-markdown-dark" rel="stylesheet" href="<%= asset_path("hljs-github-dark.css") %>" data-turbo-track="reload" disabled>
+
+<script>
+  (function () {
+    const link = document.getElementById("hljs-markdown-dark");
+    if (!link) return;
+
+    const sync = () => {
+      const isDark = document.documentElement.dataset.colorMode === "dark";
+      link.disabled = !isDark;
+    };
+
+    sync();
+    document.addEventListener("theme:changed", sync);
+    document.addEventListener("turbo:load", sync);
+  })();
+</script>

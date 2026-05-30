@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full" data-color-mode="light" data-light-theme="light" data-dark-theme="dark">
+  <head>
+    <title><%= content_for(:title) || "Blog" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Blog">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "tailwind", "primer-light", "primer-dark", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <script>
+      (function () {
+        const isDark =
+          localStorage.theme === "dark" ||
+          (!("theme" in localStorage) &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+    
+        const root = document.documentElement;
+    
+        root.classList.toggle("dark", isDark);
+        root.dataset.colorMode = isDark ? "dark" : "light";
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-full bg-[var(--bgColor-default)] text-[var(--fgColor-default)] antialiased">
+    <%= render "shared/navbar" %>
+
+    <% unless content_for?(:hide_flash) %>
+      <% if notice.present? %>
+        <div class="border-b border-emerald-200 bg-emerald-50 px-4 py-2 text-center text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
+          <%= notice %>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div class="border-b border-red-200 bg-red-50 px-4 py-2 text-center text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+          <%= alert %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <main class="mx-auto px-4 py-6 sm:px-6 antialiased <%= content_for?(:main_class) ? yield(:main_class) : "max-w-5xl" %>">
+      <%= yield %>
+    </main>
+  </body>
+</html>

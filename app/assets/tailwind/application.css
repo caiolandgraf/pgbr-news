@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.tabnews-markdown-viewer .markdown-body {
+  max-width: none;
+  padding: 0;
+}
+
+/* Navbar + páginas usam zinc; markdown usa Primer — alinhar fundo geral no dark */
+html[data-color-mode="dark"] body {
+  background-color: var(--bgColor-default);
+  color: var(--fgColor-default);
+}
