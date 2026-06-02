@@ -7,6 +7,7 @@ class Article < ApplicationRecord
   belongs_to :user
 
   has_many :article_votes, dependent: :destroy
+  has_many :article_comments, dependent: :destroy
 
   validates :title,
     presence: true,
@@ -33,28 +34,38 @@ class Article < ApplicationRecord
   def vote(direction, user)
     new_vote = direction == :up
 
-    article_vote = article_votes.find_or_initialize_by(user: user)
+    # Load existing vote (if any)
+    article_vote = article_votes.find_by(user: user)
+    previous_vote = article_vote&.vote
 
-    previous_vote = article_vote.vote
-
-    # Impede voto repetido
+    # If user repeats the same vote, don't change
     return false if previous_vote == new_vote
 
-    transaction do
-      if previous_vote.nil?
-        self.popularity += new_vote ? 1 : -1
-      elsif previous_vote
-        # upvote -> downvote
-        self.popularity -= 2
-      else
-        # downvote -> upvote
-        self.popularity += 2
+    begin
+      transaction do
+        if article_vote.nil?
+          # first time vote
+          self.popularity += new_vote ? 1 : -1
+          article_votes.create!(user: user, vote: new_vote)
+        else
+          # switching vote
+          if previous_vote
+            # upvote -> downvote
+            self.popularity -= 2
+          else
+            # downvote -> upvote
+            self.popularity += 2
+          end
+
+          article_vote.update!(vote: new_vote)
+        end
+
+        save!
       end
-
-      article_vote.vote = new_vote
-
-      save!
-      article_vote.save!
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error("Article#vote failed: #{e.message}")
+      Rails.logger.error(e.record.errors.full_messages.join("; ")) if e.respond_to?(:record)
+      return false
     end
 
     true

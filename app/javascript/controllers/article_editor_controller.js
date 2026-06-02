@@ -3,16 +3,21 @@ import { createEditor } from "markdown_editor"
 
 export default class extends Controller {
   static targets = ["body", "counter", "mount"]
-  static values = { max: Number }
+  static values = { max: Number, initialMode: String, compact: Boolean }
 
   connect() {
     this.onThemeChange = () => this.refreshTheme()
     document.addEventListener("theme:changed", this.onThemeChange)
+    this.writeOnlyObserver = null
     this.initEditor()
   }
 
   disconnect() {
     document.removeEventListener("theme:changed", this.onThemeChange)
+    if (this.writeOnlyObserver) {
+      this.writeOnlyObserver.disconnect()
+      this.writeOnlyObserver = null
+    }
     if (this.editor) {
       this.editor.$destroy()
       this.editor = null
@@ -24,10 +29,12 @@ export default class extends Controller {
 
     this.mountTarget.replaceChildren()
 
+    const mode = this.hasInitialModeValue ? this.initialModeValue : "auto"
+
     this.editor = createEditor({
       target: this.mountTarget,
       value: this.bodyTarget.value,
-      mode: "auto",
+      mode: mode,
       onChange: (value) => {
         this.bodyTarget.value = value
         this.updateCounter()
@@ -36,6 +43,42 @@ export default class extends Controller {
 
     this.updateCounter()
     this.refreshLayout()
+
+    if (!this.hasCompactValue || this.compactValue === false) {
+      this.enableWriteOnlyMode()
+    }
+  }
+
+  enableWriteOnlyMode() {
+    if (this.writeOnlyObserver) return
+
+    const clickWriteOnly = () => {
+      const button = this.mountTarget.querySelector(
+        '.bytemd-toolbar-right .bytemd-toolbar-icon[bytemd-tippy-path="2"]'
+      )
+
+      if (!button) return false
+      if (button.classList.contains('bytemd-toolbar-icon-active')) return true
+
+      button.click()
+      return true
+    }
+
+    if (clickWriteOnly()) return
+
+    this.writeOnlyObserver = new MutationObserver(() => {
+      if (clickWriteOnly() && this.writeOnlyObserver) {
+        this.writeOnlyObserver.disconnect()
+        this.writeOnlyObserver = null
+      }
+    })
+
+    this.writeOnlyObserver.observe(this.mountTarget, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    })
   }
 
   refreshLayout() {

@@ -86,3 +86,27 @@
     <% end %>
   <% end %>
 </div>
+
+<div class="mt-10">
+  <h2 class="mb-6 text-xl font-bold">
+    Comentários
+  </h2>
+
+  <% if Rails.env.development? || logged_in? %>
+    <%= form_with model: @article_comment,
+      url: user_article_create_comment_path(@article.user.username, @article.slug),
+      class: "mb-10 flex flex-col gap-2" do |f| %>
+
+      <%= render partial: "shared/markdown_field", locals: { form: f, field: :body, max_length: ArticleComment::BODY_MAX_LENGTH, required: true } %>
+
+      <%= f.submit "Comentar",
+        class: "w-fit rounded-lg border border-emerald-500 px-4 py-2 text-emerald-500" %>
+    <% end %>
+  <% end %>
+
+  <div class="space-y-8">
+    <%= render partial: "articles/comment",
+      collection: @comments,
+      as: :comment %>
+  </div>
+</div>

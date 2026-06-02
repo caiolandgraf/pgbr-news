@@ -10,9 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_30_013917) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_212502) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "article_comment_votes", force: :cascade do |t|
+    t.bigint "article_comment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.boolean "vote", null: false
+    t.index ["article_comment_id", "user_id"], name: "index_article_comment_votes_on_article_comment_id_and_user_id", unique: true
+    t.index ["article_comment_id"], name: "index_article_comment_votes_on_article_comment_id"
+    t.index ["user_id"], name: "index_article_comment_votes_on_user_id"
+  end
+
+  create_table "article_comments", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.text "body", null: false
+    t.integer "children_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.integer "depth", default: 0, null: false
+    t.bigint "parent_id"
+    t.integer "popularity", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["article_id"], name: "index_article_comments_on_article_id"
+    t.index ["parent_id"], name: "index_article_comments_on_parent_id"
+    t.index ["user_id"], name: "index_article_comments_on_user_id"
+  end
 
   create_table "article_votes", force: :cascade do |t|
     t.bigint "article_id", null: false
@@ -51,6 +77,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_013917) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "article_comment_votes", "article_comments"
+  add_foreign_key "article_comment_votes", "users"
+  add_foreign_key "article_comments", "article_comments", column: "parent_id"
+  add_foreign_key "article_comments", "articles"
+  add_foreign_key "article_comments", "users"
   add_foreign_key "article_votes", "articles"
   add_foreign_key "article_votes", "users"
   add_foreign_key "articles", "users"

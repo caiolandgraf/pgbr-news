@@ -1,6 +1,10 @@
 <%# locals: form, field, max_length, required: false, compact: false, label: nil, hint: nil %>
+<% label = local_assigns.fetch(:label, nil) %>
+<% required = local_assigns.fetch(:required, false) %>
+<% hint = local_assigns.fetch(:hint, nil) %>
 <% field_max = max_length %>
 <% field_value = form.object.public_send(field) %>
+<% compact = local_assigns.fetch(:compact, false) %>
 <% compact_class = compact ? "bytemd-editor-container--compact" : "" %>
 <% min_mount_class = compact ? "min-h-[180px]" : "min-h-[360px]" %>
 
@@ -12,9 +16,10 @@
     <% end %>
   <% end %>
 
-  <div class="bytemd-editor-container <%= compact_class %> overflow-hidden rounded-md border border-zinc-300 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/40 dark:border-[var(--borderColor-default)] dark:bg-[var(--bgColor-default)] dark:focus-within:border-[var(--fgColor-accent)] dark:focus-within:ring-[var(--fgColor-accent)]/30"
-       data-controller="article-editor"
-       data-article-editor-max-value="<%= field_max %>">
+      <div class="bytemd-editor-container <%= compact_class %> overflow-hidden rounded-md border border-zinc-300 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/40 dark:border-[var(--borderColor-default)] dark:bg-[var(--bgColor-default)] dark:focus-within:border-[var(--fgColor-accent)] dark:focus-within:ring-[var(--fgColor-accent)]/30"
+        data-controller="article-editor"
+          data-article-editor-max-value="<%= field_max %>"
+          data-article-editor-compact-value="<%= compact %>">
     <div data-article-editor-target="mount" class="block w-full <%= min_mount_class %>"></div>
     <%= form.text_area field,
         required: required,

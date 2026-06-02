@@ -109,7 +109,61 @@
 
 [data-color-mode="dark"] .bytemd-toolbar-icon svg,
 .dark .bytemd-toolbar-icon svg {
-  fill: currentColor;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon svg path,
+.dark .bytemd-toolbar-icon svg path {
+  stroke: currentColor !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon svg *,
+.dark .bytemd-toolbar-icon svg * {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* Stronger overrides: ensure toolbar icons use the default foreground in dark mode
+   Use very specific selectors and !important to win over other stylesheets. */
+html.dark .bytemd .bytemd-toolbar .bytemd-toolbar-icon,
+html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon {
+  color: var(--fgColor-default) !important;
+  background: transparent !important;
+}
+
+html.dark .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg,
+html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg {
+  stroke: currentColor !important;
+  fill: none !important;
+  overflow: visible !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+html.dark .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg path,
+html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg path {
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.5 !important;
+}
+
+/* Ensure toolbar images/SVGs are visible (override masks/filters) */
+[data-color-mode="dark"] .bytemd-toolbar-icon img,
+.dark .bytemd-toolbar-icon img {
+  filter: none !important;
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon svg,
+.dark .bytemd-toolbar-icon svg {
+  overflow: visible !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+[data-color-mode="dark"] .bytemd-toolbar-icon svg path,
+.dark .bytemd-toolbar-icon svg path {
+  stroke-width: 1.25 !important;
 }
 
 [data-color-mode="dark"] .bytemd-toolbar-tab,
@@ -213,4 +267,94 @@
 [data-color-mode="dark"] .bytemd-editor-container,
 .dark .bytemd-editor-container {
   background-color: var(--bgColor-default);
+}
+
+/* Article comment visual tweaks to match screenshot in both themes */
+.article-comment {
+  background-color: var(--bgColor-default);
+  border: 1px solid var(--borderColor-default);
+  border-radius: 8px;
+}
+
+.article-comment .comment-author {
+  color: var(--fgColor-accent) !important;
+}
+
+.article-comment .comment-meta {
+  color: var(--fgColor-muted) !important;
+}
+
+.article-comment .comment-body {
+  color: var(--fgColor-default) !important;
+}
+
+.article-comment .comment-body p + p {
+  margin-top: 0.5rem;
+}
+
+.article-comment .comment-score {
+  color: var(--fgColor-accent) !important;
+}
+
+.article-comment .comment-vote-button {
+  color: var(--fgColor-muted) !important;
+}
+
+.article-comment .comment-vote-button:hover {
+  color: var(--fgColor-default) !important;
+}
+
+.article-comment .comment-reply-button {
+  border-color: var(--borderColor-default);
+  color: var(--fgColor-default);
+  background: transparent;
+}
+
+.article-comment .comment-reply-button:hover {
+  background-color: var(--bgColor-muted);
+}
+
+html.dark .article-comment {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Remove editor focus ring/outline (Tailwind 'focus-within' ring utilities)
+   Keep border color consistent when focused. */
+.bytemd-editor-container:focus-within,
+.bytemd-editor-container:focus {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: var(--borderColor-default) !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-shadow: 0 0 transparent !important;
+  --tw-ring-shadow: 0 0 transparent !important;
+}
+
+html.dark .bytemd-editor-container:focus-within,
+html[data-color-mode="dark"] .bytemd-editor-container:focus-within {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: var(--borderColor-default) !important;
+}
+
+/* Also neutralize focus outlines on inner editor elements */
+.bytemd:focus-within,
+.bytemd .CodeMirror:focus,
+.bytemd .CodeMirror:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure the placeholder text is visible in both light and dark themes */
+.bytemd .CodeMirror pre.CodeMirror-placeholder {
+  color: var(--fgColor-muted) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+html.dark .bytemd .CodeMirror pre.CodeMirror-placeholder,
+html[data-color-mode="dark"] .bytemd .CodeMirror pre.CodeMirror-placeholder {
+  color: var(--fgColor-muted) !important;
 }
