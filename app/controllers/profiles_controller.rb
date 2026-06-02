@@ -3,17 +3,26 @@ class ProfilesController < ApplicationController
   before_action :require_owner, only: %i[ edit update ]
 
   def show
-    @articles = @user.articles.order(created_at: :desc)
+    render inertia: "Profiles/Show", props: {
+      profileUser: @user.as_json(only: [:id, :name, :username, :bio, :created_at]),
+      articles: @user.articles.order(created_at: :desc).map { |a| serialize_article(a) }
+    }
   end
 
   def edit
+    render inertia: "Profiles/Edit", props: {
+      profileUser: @user.as_json(only: [:id, :name, :username, :bio, :email])
+    }
   end
 
   def update
     if @user.update(profile_params)
-      redirect_to profile_path(@user), notice: "Perfil atualizado com sucesso.", status: :see_other
+      redirect_to profile_path(@user), notice: "Perfil atualizado com sucesso."
     else
-      render :edit, status: :unprocessable_content
+      render inertia: "Profiles/Edit", props: {
+        profileUser: @user.as_json(only: [:id, :name, :username, :bio, :email]),
+        errors: @user.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
@@ -31,5 +40,18 @@ class ProfilesController < ApplicationController
 
   def profile_params
     params.expect(user: [ :name, :username, :bio ])
+  end
+
+  def serialize_article(article)
+    {
+      id: article.id,
+      title: article.title,
+      body: article.body,
+      slug: article.slug,
+      popularity: article.popularity,
+      ref: article.ref,
+      created_at: article.created_at,
+      user: article.user.as_json(only: [:id, :username, :name])
+    }
   end
 end

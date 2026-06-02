@@ -13,6 +13,8 @@ class ArticleComment < ApplicationRecord
     foreign_key: :parent_id,
     dependent: :destroy
 
+  has_many :article_comment_votes, dependent: :destroy
+
   scope :roots, -> { where(parent_id: nil) }
   scope :active, -> { where(deleted_at: nil) }
 

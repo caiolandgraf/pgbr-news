@@ -4,6 +4,16 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :logged_in?
 
+  inertia_share do
+    {
+      currentUser: current_user.as_json(only: [:id, :name, :username, :email]),
+      flash: {
+        notice: flash[:notice],
+        alert: flash[:alert]
+      }
+    }
+  end
+
   private
 
   def current_user

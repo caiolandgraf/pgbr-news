@@ -1,17 +1,17 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  title: MyString
-  body: MyText
-  published: false
+  title: Primeiro Artigo
+  slug: primeiro-artigo
+  body: "Este é um corpo de texto longo para passar na validação do artigo. Ele precisa ter pelo menos cem caracteres para ser salvo com sucesso."
+  published: true
   popularity: 1
-  ref: MyString
+  ref: https://example.com/one
   user: one
 
 two:
-  title: MyString
-  body: MyText
-  published: false
+  title: Segundo Artigo
+  slug: segundo-artigo
+  body: "Este é outro corpo de texto longo para passar na validação do artigo. Ele precisa ter pelo menos cem caracteres para ser salvo com sucesso."
+  published: true
   popularity: 1
-  ref: MyString
+  ref: https://example.com/two
   user: two

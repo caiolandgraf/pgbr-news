@@ -3,6 +3,14 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    render inertia: "Users/New", props: {
+      user: {
+        username: "",
+        email: "",
+        password: "",
+        password_confirmation: ""
+      }
+    }
   end
 
   def create
@@ -12,7 +20,15 @@ class UsersController < ApplicationController
       session[:user_id] = @user.id
       redirect_to after_login_path, notice: "Conta criada! Bem-vindo, #{@user.username}."
     else
-      render :new, status: :unprocessable_content
+      render inertia: "Users/New", props: {
+        user: {
+          username: @user.username,
+          email: @user.email,
+          password: "",
+          password_confirmation: ""
+        },
+        errors: @user.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 

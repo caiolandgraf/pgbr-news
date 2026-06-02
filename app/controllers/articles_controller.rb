@@ -13,64 +13,85 @@ class ArticlesController < ApplicationController
       scope.order(created_at: :desc)
     end
 
-    @featured_article = ordered.first
-    @articles = ordered.offset(1)
+    featured_article = ordered.first
+    articles = ordered.offset(1)
+
+    render inertia: "Articles/Index", props: {
+      featuredArticle: featured_article ? serialize_article(featured_article) : nil,
+      articles: articles.map { |a| serialize_article(a) }
+    }
   end
 
   # GET /@:username/:slug(.:format)
   def show
-    @comments = @article.article_comments
-      .includes(:user, children: :user)
-      .roots
-      .order(popularity: :desc)
+    all_comments = @article.article_comments.includes(:user).order(popularity: :desc)
+    comments_by_parent = all_comments.group_by(&:parent_id)
+    comments_tree = build_comment_tree(comments_by_parent, nil)
 
-    @article_comment = @article.article_comments.build
+    render inertia: "Articles/Show", props: {
+      article: serialize_article(@article),
+      comments: comments_tree
+    }
   end
 
   # GET /new(.:format)
   def new
     @article = Article.new
+    render inertia: "Articles/New", props: {
+      article: {
+        title: "",
+        body: "",
+        ref: ""
+      }
+    }
   end
 
   # GET /@:username/:slug/edit(.:format)
   def edit
+    render inertia: "Articles/Edit", props: {
+      article: serialize_article(@article)
+    }
   end
 
   # POST /@:username/:slug(.:format)
   def create
     @article = current_user.articles.build(article_params)
 
-    respond_to do |format|
-      if @article.save
-        format.html { redirect_to user_article_path(@article.user.username, @article.slug), notice: "Publicação criada com sucesso." }
-        format.json { render :show, status: :created, location: @article }
-      else
-        format.html { render :new, status: :unprocessable_content }
-        format.json { render json: @article.errors, status: :unprocessable_content }
-      end
+    if @article.save
+      redirect_to user_article_path(@article.user.username, @article.slug), notice: "Publicação criada com sucesso."
+    else
+      render inertia: "Articles/New", props: {
+        article: {
+          title: @article.title,
+          body: @article.body,
+          ref: @article.ref
+        },
+        errors: @article.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /@:username/:slug(.:format)
   def update
-    respond_to do |format|
-      if @article.update(article_params)
-        format.html { redirect_to user_article_path(@article.user.username, @article.slug), notice: "Publicação atualizada com sucesso.", status: :see_other }
-        format.json { render :show, status: :ok, location: @article }
-      else
-        format.html { render :edit, status: :unprocessable_content }
-        format.json { render json: @article.errors, status: :unprocessable_content }
-      end
+    if @article.update(article_params)
+      redirect_to user_article_path(@article.user.username, @article.slug), notice: "Publicação atualizada com sucesso."
+    else
+      render inertia: "Articles/Edit", props: {
+        article: serialize_article(@article).merge(
+          title: @article.title,
+          body: @article.body,
+          ref: @article.ref
+        ),
+        errors: @article.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
-
 
   # PATCH /@:username/:slug/vote(.:format)
   def vote
     if current_user == @article.user
       redirect_to user_article_path(@article.user.username, @article.slug),
-        alert: "Você não pode votar na própria publicação.",
-        status: :see_other
+        alert: "Você não pode votar na própria publicação."
       return
     end
     direction = params[:up] ? :up : :down
@@ -78,38 +99,28 @@ class ArticlesController < ApplicationController
 
     if success
       redirect_to user_article_path(@article.user.username, @article.slug),
-        notice: "Voto registrado com sucesso.",
-        status: :see_other
+        notice: "Voto registrado com sucesso."
       return
     end
 
     # Determine why vote failed to provide a better message
     existing = @article.article_votes.find_by(user: current_user)
     if existing.nil?
-      # failed to create vote due to validation or internal error
       redirect_to user_article_path(@article.user.username, @article.slug),
-        alert: "Erro ao registrar voto.",
-        status: :see_other
+        alert: "Erro ao registrar voto."
     elsif existing.vote == (direction == :up)
       redirect_to user_article_path(@article.user.username, @article.slug),
-        alert: "Você já registrou esse voto.",
-        status: :see_other
+        alert: "Você já registrou esse voto."
     else
-      # existing vote present but update failed
       redirect_to user_article_path(@article.user.username, @article.slug),
-        alert: "Erro ao atualizar voto. Tente novamente.",
-        status: :see_other
+        alert: "Erro ao atualizar voto. Tente novamente."
     end
   end
 
   # DELETE /@:username/:slug/cancel(.:format)
   def destroy
     @article.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to root_path, notice: "Publicação excluída com sucesso.", status: :see_other }
-      format.json { head :no_content }
-    end
+    redirect_to root_path, notice: "Publicação excluída com sucesso."
   end
 
   # POST /@:username/:slug/comments(.:format)
@@ -120,8 +131,15 @@ class ArticlesController < ApplicationController
     if @article_comment.save
       redirect_to user_article_path(@article.user.username, @article.slug)
     else
-      @comments = @article.article_comments.includes(:user, children: :user).roots.order(popularity: :desc)
-      render :show, status: :unprocessable_entity
+      all_comments = @article.article_comments.includes(:user).order(popularity: :desc)
+      comments_by_parent = all_comments.group_by(&:parent_id)
+      comments_tree = build_comment_tree(comments_by_parent, nil)
+
+      render inertia: "Articles/Show", props: {
+        article: serialize_article(@article),
+        comments: comments_tree,
+        commentErrors: @article_comment.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
@@ -131,8 +149,7 @@ class ArticlesController < ApplicationController
 
     if current_user == @article_comment.user
       redirect_to user_article_path(@article.user.username, @article.slug),
-        alert: "Você não pode votar no seu próprio comentário.",
-        status: :see_other
+        alert: "Você não pode votar no seu próprio comentário."
       return
     end
 
@@ -140,12 +157,10 @@ class ArticlesController < ApplicationController
 
     if success
       redirect_to user_article_path(@article.user.username, @article.slug),
-        notice: "Voto registrado com sucesso.",
-        status: :see_other
+        notice: "Voto registrado com sucesso."
     else
       redirect_to user_article_path(@article.user.username, @article.slug),
-        alert: "Você já registrou esse voto.",
-        status: :see_other
+        alert: "Você já registrou esse voto."
     end
   end
 
@@ -166,8 +181,15 @@ class ArticlesController < ApplicationController
 
       redirect_to user_article_path(@article.user.username, @article.slug)
     else
-      @comments = @article.article_comments.includes(:user, children: :user).roots.order(popularity: :desc)
-      render :show, status: :unprocessable_entity
+      all_comments = @article.article_comments.includes(:user).order(popularity: :desc)
+      comments_by_parent = all_comments.group_by(&:parent_id)
+      comments_tree = build_comment_tree(comments_by_parent, nil)
+
+      render inertia: "Articles/Show", props: {
+        article: serialize_article(@article),
+        comments: comments_tree,
+        commentErrors: @article_comment.errors.full_messages
+      }, status: :unprocessable_entity
     end
   end
 
@@ -186,18 +208,19 @@ class ArticlesController < ApplicationController
     )
 
     redirect_to user_article_path(@article.user.username, @article.slug),
-      notice: "Comentário excluído com sucesso.",
-      status: :see_other
+      notice: "Comentário excluído com sucesso."
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
-      user = User.find_by!(username: params[:username])
-
-      slug = params[:slug] || params[:id]
-
-      @article = user.articles.find_by!(slug: slug)
+      if params[:username].present?
+        user = User.find_by!(username: params[:username])
+        slug = params[:slug] || params[:id]
+        @article = user.articles.find_by!(slug: slug)
+      else
+        @article = Article.find(params[:id])
+      end
     end
 
     # Only allow a list of trusted parameters through.
@@ -211,5 +234,32 @@ class ArticlesController < ApplicationController
 
     def article_comment_comment_params
       params.expect(article_comment_comment: [ :body ])
+    end
+
+    def serialize_article(article)
+      {
+        id: article.id,
+        title: article.title,
+        body: article.body,
+        slug: article.slug,
+        popularity: article.popularity,
+        ref: article.ref,
+        created_at: article.created_at,
+        user: article.user.as_json(only: [:id, :username, :name])
+      }
+    end
+
+    def build_comment_tree(comments_by_parent, parent_id = nil)
+      (comments_by_parent[parent_id] || []).map do |comment|
+        {
+          id: comment.id,
+          body: comment.body,
+          popularity: comment.popularity,
+          created_at: comment.created_at,
+          deleted: comment.deleted?,
+          user: comment.user.as_json(only: [:id, :username]),
+          children: build_comment_tree(comments_by_parent, comment.id)
+        }
+      end
     end
 end

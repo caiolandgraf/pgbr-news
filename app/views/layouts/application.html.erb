@@ -15,8 +15,8 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%= stylesheet_link_tag "tailwind", "primer-light", "primer-dark", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <%= stylesheet_link_tag "tailwind", "primer-light", "primer-dark", "bytemd", "bytemd_theme", "tabnews-editor", "tabnews-viewer", "hljs-github", "data-turbo-track": "reload" %>
+    <link id="hljs-markdown-dark" rel="stylesheet" href="<%= asset_path("hljs-github-dark.css") %>" data-turbo-track="reload" disabled>
 
     <script>
       (function () {
@@ -34,38 +34,9 @@
     <%= vite_client_tag %>
     <%= vite_javascript_tag "inertia" %>
     <%= inertia_ssr_head %>
-    <%= vite_javascript_tag 'application' %>
-    <!--
-      If using a TypeScript entrypoint file:
-        vite_typescript_tag 'application'
-
-      If using a .jsx or .tsx entrypoint, add the extension:
-        vite_javascript_tag 'application.jsx'
-
-      Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
-    -->
-
   </head>
 
   <body class="min-h-full bg-[var(--bgColor-default)] text-[var(--fgColor-default)] antialiased">
-    <%= render "shared/navbar" %>
-
-    <% unless content_for?(:hide_flash) %>
-      <% if notice.present? %>
-        <div class="border-b border-emerald-200 bg-emerald-50 px-4 py-2 text-center text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
-          <%= notice %>
-        </div>
-      <% end %>
-
-      <% if alert.present? %>
-        <div class="border-b border-red-200 bg-red-50 px-4 py-2 text-center text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
-          <%= alert %>
-        </div>
-      <% end %>
-    <% end %>
-
-    <main class="mx-auto px-4 py-6 sm:px-6 antialiased <%= content_for?(:main_class) ? yield(:main_class) : "max-w-5xl" %>">
-      <%= yield %>
-    </main>
+    <%= yield %>
   </body>
 </html>
