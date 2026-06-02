@@ -5,7 +5,7 @@ class ProfilesController < ApplicationController
   def show
     render inertia: "Profiles/Show", props: {
       profileUser: @user.as_json(only: [:id, :name, :username, :bio, :created_at]),
-      articles: @user.articles.order(created_at: :desc).map { |a| serialize_article(a) }
+      articles: @user.articles.includes(:article_votes).order(created_at: :desc).map { |a| serialize_article(a) }
     }
   end
 
@@ -43,12 +43,16 @@ class ProfilesController < ApplicationController
   end
 
   def serialize_article(article)
+    upvotes = article.article_votes.loaded? ? article.article_votes.select(&:vote).size : article.article_votes.where(vote: true).count
+    downvotes = article.article_votes.loaded? ? article.article_votes.reject(&:vote).size : article.article_votes.where(vote: false).count
     {
       id: article.id,
       title: article.title,
       body: article.body,
       slug: article.slug,
       popularity: article.popularity,
+      upvotes: upvotes,
+      downvotes: downvotes,
       ref: article.ref,
       created_at: article.created_at,
       user: article.user.as_json(only: [:id, :username, :name])

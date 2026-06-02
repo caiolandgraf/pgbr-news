@@ -11,7 +11,12 @@
           </h2>
         </Link>
         <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-500 flex items-center gap-1.5 flex-wrap">
-          <span>{{ article.popularity || 0 }} pontos</span>
+          <span class="relative group cursor-help">
+            <span>{{ article.popularity || 0 }} pontos</span>
+            <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-zinc-800/95 dark:bg-zinc-700/95 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-opacity duration-200 group-hover:opacity-100 border border-zinc-700/50 dark:border-zinc-600/50">
+              +{{ article.upvotes || 0 }} | -{{ article.downvotes || 0 }} ({{ relevance }}% achou relevante)
+            </span>
+          </span>
           <span>·</span>
           <Link :href="`/@${article.user.username}`" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
             @{{ article.user.username }}
@@ -25,10 +30,11 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { timeAgo } from '../utils'
 
-defineProps({
+const props = defineProps({
   article: {
     type: Object,
     required: true
@@ -37,5 +43,12 @@ defineProps({
     type: Number,
     default: undefined
   }
+})
+
+const relevance = computed(() => {
+  const up = props.article.upvotes || 0
+  const down = props.article.downvotes || 0
+  const total = up + down
+  return total > 0 ? Math.round((up / total) * 100) : 0
 })
 </script>

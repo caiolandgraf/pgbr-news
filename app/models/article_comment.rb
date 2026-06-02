@@ -37,24 +37,28 @@ class ArticleComment < ApplicationRecord
 
     previous_vote = article_comment_vote.vote
 
-    # Impede voto repetido
-    return false if previous_vote == new_vote
-
     transaction do
       if previous_vote.nil?
         self.popularity += new_vote ? 1 : -1
+        article_comment_vote.vote = new_vote
+        article_comment_vote.save!
+      elsif previous_vote == new_vote
+        # repeating the same vote -> cancel the vote
+        self.popularity += new_vote ? -1 : 1
+        article_comment_vote.destroy!
       elsif previous_vote
         # upvote -> downvote
         self.popularity -= 2
+        article_comment_vote.vote = new_vote
+        article_comment_vote.save!
       else
         # downvote -> upvote
         self.popularity += 2
+        article_comment_vote.vote = new_vote
+        article_comment_vote.save!
       end
 
-      article_comment_vote.vote = new_vote
-
       save!
-      article_comment_vote.save!
     end
 
     true

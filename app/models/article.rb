@@ -38,15 +38,16 @@ class Article < ApplicationRecord
     article_vote = article_votes.find_by(user: user)
     previous_vote = article_vote&.vote
 
-    # If user repeats the same vote, don't change
-    return false if previous_vote == new_vote
-
     begin
       transaction do
         if article_vote.nil?
           # first time vote
           self.popularity += new_vote ? 1 : -1
           article_votes.create!(user: user, vote: new_vote)
+        elsif previous_vote == new_vote
+          # repeating the same vote -> cancel the vote
+          self.popularity += new_vote ? -1 : 1
+          article_vote.destroy!
         else
           # switching vote
           if previous_vote

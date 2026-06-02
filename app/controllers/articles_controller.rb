@@ -4,7 +4,7 @@ class ArticlesController < ApplicationController
 
   # GET /
   def index
-    scope = Article.includes(:user)
+    scope = Article.includes(:user, :article_votes)
 
     ordered = case params[:sort]
     when "relevant"
@@ -24,7 +24,7 @@ class ArticlesController < ApplicationController
 
   # GET /@:username/:slug(.:format)
   def show
-    all_comments = @article.article_comments.includes(:user).order(popularity: :desc)
+    all_comments = @article.article_comments.includes(:user, :article_comment_votes).order(popularity: :desc)
     comments_by_parent = all_comments.group_by(&:parent_id)
     comments_tree = build_comment_tree(comments_by_parent, nil)
 
@@ -94,7 +94,7 @@ class ArticlesController < ApplicationController
         alert: "Você não pode votar na própria publicação."
       return
     end
-    direction = params[:up] ? :up : :down
+    direction = ActiveModel::Type::Boolean.new.cast(params[:up]) ? :up : :down
     success = @article.vote(direction, current_user)
 
     if success
@@ -131,7 +131,7 @@ class ArticlesController < ApplicationController
     if @article_comment.save
       redirect_to user_article_path(@article.user.username, @article.slug)
     else
-      all_comments = @article.article_comments.includes(:user).order(popularity: :desc)
+      all_comments = @article.article_comments.includes(:user, :article_comment_votes).order(popularity: :desc)
       comments_by_parent = all_comments.group_by(&:parent_id)
       comments_tree = build_comment_tree(comments_by_parent, nil)
 
@@ -153,7 +153,7 @@ class ArticlesController < ApplicationController
       return
     end
 
-    success = @article_comment.vote(params[:up] ? :up : :down, current_user)
+    success = @article_comment.vote(ActiveModel::Type::Boolean.new.cast(params[:up]) ? :up : :down, current_user)
 
     if success
       redirect_to user_article_path(@article.user.username, @article.slug),
@@ -181,7 +181,7 @@ class ArticlesController < ApplicationController
 
       redirect_to user_article_path(@article.user.username, @article.slug)
     else
-      all_comments = @article.article_comments.includes(:user).order(popularity: :desc)
+      all_comments = @article.article_comments.includes(:user, :article_comment_votes).order(popularity: :desc)
       comments_by_parent = all_comments.group_by(&:parent_id)
       comments_tree = build_comment_tree(comments_by_parent, nil)
 
@@ -196,7 +196,7 @@ class ArticlesController < ApplicationController
   # PATCH /@:username/:slug/comments/:id/comments/:comment_id/vote(.:format)
   def vote_comment_comment
     @article_comment = @article.article_comments.find(params[:id])
-    @article_comment.vote(params[:up] ? :up : :down, current_user)
+    @article_comment.vote(ActiveModel::Type::Boolean.new.cast(params[:up]) ? :up : :down, current_user)
   end
 
   # DELETE /@:username/:slug/comments/:id/cancel
@@ -217,9 +217,9 @@ class ArticlesController < ApplicationController
       if params[:username].present?
         user = User.find_by!(username: params[:username])
         slug = params[:slug] || params[:id]
-        @article = user.articles.find_by!(slug: slug)
+        @article = user.articles.includes(:article_votes).find_by!(slug: slug)
       else
-        @article = Article.find(params[:id])
+        @article = Article.includes(:article_votes).find(params[:id])
       end
     end
 
@@ -237,12 +237,16 @@ class ArticlesController < ApplicationController
     end
 
     def serialize_article(article)
+      upvotes = article.article_votes.loaded? ? article.article_votes.select(&:vote).size : article.article_votes.where(vote: true).count
+      downvotes = article.article_votes.loaded? ? article.article_votes.reject(&:vote).size : article.article_votes.where(vote: false).count
       {
         id: article.id,
         title: article.title,
         body: article.body,
         slug: article.slug,
         popularity: article.popularity,
+        upvotes: upvotes,
+        downvotes: downvotes,
         ref: article.ref,
         created_at: article.created_at,
         user: article.user.as_json(only: [:id, :username, :name])
@@ -251,10 +255,14 @@ class ArticlesController < ApplicationController
 
     def build_comment_tree(comments_by_parent, parent_id = nil)
       (comments_by_parent[parent_id] || []).map do |comment|
+        upvotes = comment.article_comment_votes.loaded? ? comment.article_comment_votes.select(&:vote).size : comment.article_comment_votes.where(vote: true).count
+        downvotes = comment.article_comment_votes.loaded? ? comment.article_comment_votes.reject(&:vote).size : comment.article_comment_votes.where(vote: false).count
         {
           id: comment.id,
           body: comment.body,
           popularity: comment.popularity,
+          upvotes: upvotes,
+          downvotes: downvotes,
           created_at: comment.created_at,
           deleted: comment.deleted?,
           user: comment.user.as_json(only: [:id, :username]),

@@ -20,9 +20,14 @@
           </svg>
         </button>
 
-        <span class="text-sm text-emerald-500 font-semibold">
-          {{ article.popularity }}
-        </span>
+        <div class="relative group cursor-help flex justify-center items-center">
+          <span class="text-sm text-emerald-500 font-semibold">
+            {{ article.popularity }}
+          </span>
+          <div class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-zinc-800/95 dark:bg-zinc-700/95 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-opacity duration-200 group-hover:opacity-100 border border-zinc-700/50 dark:border-zinc-600/50">
+            +{{ article.upvotes || 0 }} | -{{ article.downvotes || 0 }} ({{ relevance }}% achou relevante)
+          </div>
+        </div>
 
         <button 
           @click="vote(false)"
@@ -161,6 +166,13 @@ const props = defineProps({
 
 const { props: pageProps } = usePage()
 const currentUser = computed(() => pageProps.currentUser)
+
+const relevance = computed(() => {
+  const up = props.article.upvotes || 0
+  const down = props.article.downvotes || 0
+  const total = up + down
+  return total > 0 ? Math.round((up / total) * 100) : 0
+})
 
 const commentBody = ref('')
 

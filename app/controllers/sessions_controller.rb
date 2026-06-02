@@ -6,15 +6,16 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(email: params[:email]&.strip&.downcase)
+    login_input = (params[:login] || params[:email])&.strip&.downcase
+    user = User.find_by(email: login_input) || User.find_by(username: login_input)
 
     if user&.authenticate(params[:password])
       session[:user_id] = user.id
       redirect_to after_login_path, notice: "Bem-vindo de volta, #{user.username}!"
     else
       render inertia: "Sessions/New", props: {
-        email: params[:email],
-        errors: ["E-mail ou senha incorretos. Tente novamente."]
+        login: params[:login] || params[:email],
+        errors: ["E-mail, usuário ou senha incorretos. Tente novamente."]
       }, status: :unprocessable_content
     end
   end
