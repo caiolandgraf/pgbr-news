@@ -4,7 +4,6 @@ class ArticleComment < ApplicationRecord
 
   belongs_to :article
   belongs_to :user
-
   belongs_to :parent,
     class_name: "ArticleComment",
     optional: true
@@ -15,6 +14,7 @@ class ArticleComment < ApplicationRecord
     dependent: :destroy
 
   scope :roots, -> { where(parent_id: nil) }
+  scope :active, -> { where(deleted_at: nil) }
 
   validates :body,
     presence: true,
@@ -23,6 +23,10 @@ class ArticleComment < ApplicationRecord
   validates :popularity, presence: true
   validates :depth, presence: true
   validates :children_count, presence: true
+
+  def deleted?
+    deleted_at.present?
+  end
 
   def vote(direction, user)
     new_vote = direction == :up

@@ -1,8 +1,8 @@
 class ArticlesController < ApplicationController
-  before_action :set_article, only: %i[ show edit update destroy vote create_comment vote_comment create_comment_comment vote_comment_comment ]
+  before_action :set_article, only: %i[ show edit update destroy vote create_comment vote_comment create_comment_comment vote_comment_comment destroy_comment ]
   before_action :require_login, only: %i[ new create edit update destroy vote create_comment create_comment_comment vote_comment vote_comment_comment ]
 
-  # GET /articles or /articles.json
+  # GET /
   def index
     scope = Article.includes(:user)
 
@@ -17,7 +17,7 @@ class ArticlesController < ApplicationController
     @articles = ordered.offset(1)
   end
 
-  # GET /articles/1 or /articles/1.json
+  # GET /@:username/:slug(.:format)
   def show
     @comments = @article.article_comments
       .includes(:user, children: :user)
@@ -27,16 +27,16 @@ class ArticlesController < ApplicationController
     @article_comment = @article.article_comments.build
   end
 
-  # GET /articles/new
+  # GET /new(.:format)
   def new
     @article = Article.new
   end
 
-  # GET /articles/1/edit
+  # GET /@:username/:slug/edit(.:format)
   def edit
   end
 
-  # POST /articles or /articles.json
+  # POST /@:username/:slug(.:format)
   def create
     @article = current_user.articles.build(article_params)
 
@@ -51,7 +51,7 @@ class ArticlesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /articles/1 or /articles/1.json
+  # PATCH/PUT /@:username/:slug(.:format)
   def update
     respond_to do |format|
       if @article.update(article_params)
@@ -65,6 +65,7 @@ class ArticlesController < ApplicationController
   end
 
 
+  # PATCH /@:username/:slug/vote(.:format)
   def vote
     if current_user == @article.user
       redirect_to user_article_path(@article.user.username, @article.slug),
@@ -101,7 +102,7 @@ class ArticlesController < ApplicationController
     end
   end
 
-  # DELETE /articles/1 or /articles/1.json
+  # DELETE /@:username/:slug/cancel(.:format)
   def destroy
     @article.destroy!
 
@@ -111,6 +112,7 @@ class ArticlesController < ApplicationController
     end
   end
 
+  # POST /@:username/:slug/comments(.:format)
   def create_comment
     @article_comment = @article.article_comments.build(article_comment_params)
     @article_comment.user = current_user
@@ -123,8 +125,16 @@ class ArticlesController < ApplicationController
     end
   end
 
+  # PATCH /@:username/:slug/comments/:id/vote(.:format)
   def vote_comment
     @article_comment = @article.article_comments.find(params[:id])
+
+    if current_user == @article_comment.user
+      redirect_to user_article_path(@article.user.username, @article.slug),
+        alert: "Você não pode votar no seu próprio comentário.",
+        status: :see_other
+      return
+    end
 
     success = @article_comment.vote(params[:up] ? :up : :down, current_user)
 
@@ -139,6 +149,7 @@ class ArticlesController < ApplicationController
     end
   end
 
+  # POST /@:username/:slug/comments/:id/comments(.:format)
   def create_comment_comment
     parent = @article.article_comments.find(params[:id])
 
@@ -160,9 +171,23 @@ class ArticlesController < ApplicationController
     end
   end
 
+  # PATCH /@:username/:slug/comments/:id/comments/:comment_id/vote(.:format)
   def vote_comment_comment
     @article_comment = @article.article_comments.find(params[:id])
     @article_comment.vote(params[:up] ? :up : :down, current_user)
+  end
+
+  # DELETE /@:username/:slug/comments/:id/cancel
+  def destroy_comment
+    @article_comment = @article.article_comments.find(params[:id])
+
+    @article_comment.update!(
+      deleted_at: Time.current
+    )
+
+    redirect_to user_article_path(@article.user.username, @article.slug),
+      notice: "Comentário excluído com sucesso.",
+      status: :see_other
   end
 
   private

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   patch "/@:username/:slug/comments/:id/vote", to: "articles#vote_comment", as: :user_article_vote_comment
   post "/@:username/:slug/comments/:id/comments", to: "articles#create_comment_comment", as: :user_article_create_comment_comment
   patch "/@:username/:slug/comments/:id/comments/:comment_id/vote", to: "articles#vote_comment_comment", as: :user_article_vote_comment_comment
+  delete "/@:username/:slug/comments/:id/cancel", to: "articles#destroy_comment", as: :user_article_destroy_comment
 
   resources :users, only: [ :new, :create ]
 

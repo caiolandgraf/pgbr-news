@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   PASSWORD_MIN_LENGTH = 8
+  PASSWORD_MAX_LENGTH = 255
   BIO_MAX_LENGTH = 2_000
 
   has_secure_password
@@ -21,7 +22,7 @@ class User < ApplicationRecord
     format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validates :password,
-    length: { minimum: PASSWORD_MIN_LENGTH },
+    length: { minimum: PASSWORD_MIN_LENGTH, maximum: PASSWORD_MAX_LENGTH },
     if: -> { password.present? }
 
   validates :bio,

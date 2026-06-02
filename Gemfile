@@ -14,6 +14,8 @@ gem "importmap-rails"
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
+gem "inertia_rails"
+gem "vite_rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -73,3 +75,5 @@ gem "lucide-rails", "~> 0.7.4"
 gem "rubocop", "~> 1.86"
 
 gem "rubocop-rails", "~> 2.35"
+
+gem "htmlbeautifier", "~> 1.4"
