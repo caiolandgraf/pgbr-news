@@ -141,7 +141,12 @@ html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg {
 }
 
 html.dark .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg path,
-html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg path {
+html[data-color-mode="dark"]
+  .bytemd
+  .bytemd-toolbar
+  .bytemd-toolbar-icon
+  svg
+  path {
   stroke: currentColor !important;
   fill: none !important;
   stroke-width: 1.5 !important;
@@ -183,13 +188,19 @@ html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg pa
 
 [data-color-mode="dark"] .bytemd .CodeMirror,
 .dark .bytemd .CodeMirror {
-  background-color: var(--codeMirror-bgColor, var(--bgColor-default)) !important;
+  background-color: var(
+    --codeMirror-bgColor,
+    var(--bgColor-default)
+  ) !important;
   color: var(--fgColor-default) !important;
 }
 
 [data-color-mode="dark"] .bytemd .CodeMirror-gutters,
 .dark .bytemd .CodeMirror-gutters {
-  background-color: var(--codeMirror-gutters-bgColor, var(--bgColor-muted)) !important;
+  background-color: var(
+    --codeMirror-gutters-bgColor,
+    var(--bgColor-muted)
+  ) !important;
   border-right-color: var(--borderColor-default) !important;
 }
 
@@ -211,7 +222,9 @@ html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg pa
   color: var(--fgColor-default);
 }
 
-[data-color-mode="dark"] .tippy-box[data-theme~="light-border"] > .tippy-backdrop,
+[data-color-mode="dark"]
+  .tippy-box[data-theme~="light-border"]
+  > .tippy-backdrop,
 .dark .tippy-box[data-theme~="light-border"] > .tippy-backdrop {
   background-color: var(--bgColor-default) !important;
 }
@@ -271,7 +284,7 @@ html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg pa
 
 /* Article comment visual tweaks to match screenshot in both themes */
 .article-comment {
-  background-color: var(--bgColor-default);
+  background-color: rgba(244, 244, 245, 0.5);
   border: 1px solid var(--borderColor-default);
   border-radius: 8px;
 }
@@ -315,7 +328,7 @@ html[data-color-mode="dark"] .bytemd .bytemd-toolbar .bytemd-toolbar-icon svg pa
 }
 
 html.dark .article-comment {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(24, 24, 27, 0.3) !important;
   border-color: rgba(255, 255, 255, 0.06);
 }
 

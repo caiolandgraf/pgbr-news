@@ -104,22 +104,55 @@
         Comentários
       </h2>
 
-      <!-- Comment Submission Form -->
-      <div v-if="currentUser" class="mb-10">
-        <form @submit.prevent="submitComment" class="flex flex-col gap-2">
-          <MarkdownField 
-            v-model="commentBody"
-            :max-length="20000"
-            :required="true"
-            :error="commentErrors?.join(', ')"
-          />
+      <!-- Comment Submission Form (TabNews style collapsible box) -->
+      <div class="mb-8 rounded-md border border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50/50 dark:bg-zinc-900/10">
+        <div v-if="!showArticleReplyForm" class="flex gap-2 items-center">
           <button 
-            type="submit"
-            class="w-fit rounded-lg border border-emerald-500 px-4 py-2 text-emerald-500 cursor-pointer hover:bg-emerald-500 hover:text-white transition duration-200"
+            type="button"
+            @click="handleArticleReplyClick"
+            class="bg-zinc-100 hover:bg-zinc-200 dark:bg-[#21262d] dark:hover:bg-[#30363d] text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-[#30363d] hover:border-zinc-400 dark:hover:border-zinc-500 rounded px-3 py-1.5 text-xs font-semibold flex items-center justify-center transition-all duration-150 cursor-pointer"
           >
-            Comentar
+            Responder
           </button>
-        </form>
+          <button 
+            type="button"
+            @click="shareArticle"
+            class="bg-zinc-100 hover:bg-zinc-200 dark:bg-[#21262d] dark:hover:bg-[#30363d] text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-[#30363d] hover:border-zinc-400 dark:hover:border-zinc-500 rounded p-1.5 text-xs font-semibold flex items-center justify-center transition-all duration-150 cursor-pointer"
+            title="Compartilhar"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l3-3m0 0l3 3m-3-3v12M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+          <span v-if="copiedArticleLink" class="text-xs text-emerald-500 flex items-center animate-fade-in">
+            Link copiado!
+          </span>
+        </div>
+        <div v-else class="animate-fade-in">
+          <form @submit.prevent="submitComment" class="flex flex-col gap-2">
+            <MarkdownField 
+              v-model="commentBody"
+              :max-length="20000"
+              :required="true"
+              :error="commentErrors?.join(', ')"
+            />
+            <div class="flex gap-2">
+              <button 
+                type="submit"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white rounded px-3 py-1.5 text-xs font-semibold cursor-pointer transition"
+              >
+                Comentar
+              </button>
+              <button 
+                type="button"
+                @click="showArticleReplyForm = false"
+                class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 rounded px-3 py-1.5 text-xs font-semibold cursor-pointer transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <!-- Nested Comments List -->
@@ -175,6 +208,26 @@ const relevance = computed(() => {
 })
 
 const commentBody = ref('')
+const showArticleReplyForm = ref(false)
+const copiedArticleLink = ref(false)
+
+const handleArticleReplyClick = () => {
+  if (!currentUser.value) {
+    router.visit('/login')
+  } else {
+    showArticleReplyForm.value = !showArticleReplyForm.value
+  }
+}
+
+const shareArticle = () => {
+  const url = window.location.href
+  navigator.clipboard.writeText(url).then(() => {
+    copiedArticleLink.value = true
+    setTimeout(() => {
+      copiedArticleLink.value = false
+    }, 2000)
+  })
+}
 
 const vote = (up) => {
   const url = `/@${props.article.user.username}/${props.article.slug}/vote`
@@ -201,6 +254,7 @@ const submitComment = () => {
     preserveScroll: true,
     onSuccess: () => {
       commentBody.value = ''
+      showArticleReplyForm.value = false
     }
   })
 }
