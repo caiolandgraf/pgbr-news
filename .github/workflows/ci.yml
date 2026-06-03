@@ -89,6 +89,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -124,6 +133,15 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install JavaScript dependencies
+        run: npm ci
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
