@@ -4,14 +4,14 @@ class ProfilesController < ApplicationController
 
   def show
     render inertia: "Profiles/Show", props: {
-      profileUser: @user.as_json(only: [:id, :name, :username, :bio, :created_at]),
+      profileUser: @user.as_json(only: [ :id, :name, :username, :bio, :created_at ]),
       articles: @user.articles.includes(:article_votes).order(created_at: :desc).map { |a| serialize_article(a) }
     }
   end
 
   def edit
     render inertia: "Profiles/Edit", props: {
-      profileUser: @user.as_json(only: [:id, :name, :username, :bio, :email])
+      profileUser: @user.as_json(only: [ :id, :name, :username, :bio, :email ])
     }
   end
 
@@ -20,7 +20,7 @@ class ProfilesController < ApplicationController
       redirect_to profile_path(@user), notice: "Perfil atualizado com sucesso."
     else
       render inertia: "Profiles/Edit", props: {
-        profileUser: @user.as_json(only: [:id, :name, :username, :bio, :email]),
+        profileUser: @user.as_json(only: [ :id, :name, :username, :bio, :email ]),
         errors: @user.errors.full_messages
       }, status: :unprocessable_entity
     end
@@ -55,7 +55,7 @@ class ProfilesController < ApplicationController
       downvotes: downvotes,
       ref: article.ref,
       created_at: article.created_at,
-      user: article.user.as_json(only: [:id, :username, :name])
+      user: article.user.as_json(only: [ :id, :username, :name ])
     }
   end
 end

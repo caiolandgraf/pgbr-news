@@ -55,7 +55,7 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     initial_popularity = comment.popularity
 
     patch user_article_vote_comment_url(username: @article.user.username, slug: @article.slug, id: comment.id), params: { up: true }
-    
+
     assert_redirected_to user_article_url(@article.user.username, @article.slug)
     assert_equal initial_popularity + 1, comment.reload.popularity
   end
@@ -66,7 +66,7 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     initial_popularity = comment.popularity
 
     patch user_article_vote_comment_url(username: @article.user.username, slug: @article.slug, id: comment.id), params: { up: false }
-    
+
     assert_redirected_to user_article_url(@article.user.username, @article.slug)
     assert_equal initial_popularity - 1, comment.reload.popularity
   end

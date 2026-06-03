@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   inertia_share do
     {
-      currentUser: current_user.as_json(only: [:id, :name, :username, :email]),
+      currentUser: current_user.as_json(only: [ :id, :name, :username, :email ]),
       flash: {
         notice: flash[:notice],
         alert: flash[:alert]
@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   def require_login
     return if logged_in?
 
-    session[:return_to] = request.fullpath if request.get?
+    session[:return_to] = request.fullpath if request.get? || request.head?
     redirect_to login_path, alert: "Faça login para continuar."
   end
 

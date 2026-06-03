@@ -15,7 +15,7 @@ class SessionsController < ApplicationController
     else
       render inertia: "Sessions/New", props: {
         login: params[:login] || params[:email],
-        errors: ["E-mail, usuário ou senha incorretos. Tente novamente."]
+        errors: [ "E-mail, usuário ou senha incorretos. Tente novamente." ]
       }, status: :unprocessable_content
     end
   end
