@@ -249,7 +249,7 @@ class ArticlesController < ApplicationController
         downvotes: downvotes,
         ref: article.ref,
         created_at: article.created_at,
-        user: article.user.as_json(only: [:id, :username, :name])
+        user: article.user.as_json(only: [ :id, :username, :name ])
       }
     end
 
@@ -259,13 +259,14 @@ class ArticlesController < ApplicationController
         downvotes = comment.article_comment_votes.loaded? ? comment.article_comment_votes.reject(&:vote).size : comment.article_comment_votes.where(vote: false).count
         {
           id: comment.id,
+          depth: comment.depth,
           body: comment.body,
           popularity: comment.popularity,
           upvotes: upvotes,
           downvotes: downvotes,
           created_at: comment.created_at,
           deleted: comment.deleted?,
-          user: comment.user.as_json(only: [:id, :username]),
+          user: comment.user.as_json(only: [ :id, :username ]),
           children: build_comment_tree(comments_by_parent, comment.id)
         }
       end

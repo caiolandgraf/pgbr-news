@@ -12,19 +12,7 @@
           class="comment-vote-button text-sm text-zinc-500 rounded-lg p-2 transition flex items-center justify-center cursor-pointer hover:dark:bg-white/5 hover:bg-black/5 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
           title="Votar relevante"
         >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m18 15-6-6-6 6"
-            />
-          </svg>
+          <ChevronUp class="w-4 h-4" />
         </button>
 
         <span
@@ -38,7 +26,7 @@
           </template>
           <template v-else>
             <span class="relative group cursor-help">
-              <span>{{ comment.popularity || 0 }}</span>
+              <span class="text-emerald-600">{{ comment.popularity || 0 }}</span>
               <span
                 class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-zinc-800/95 dark:bg-zinc-700/95 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-opacity duration-200 group-hover:opacity-100 border border-zinc-700/50 dark:border-zinc-600/50"
               >
@@ -54,19 +42,7 @@
           class="comment-vote-button text-sm text-zinc-500 rounded-lg p-2 transition flex items-center justify-center cursor-pointer hover:dark:bg-white/5 hover:bg-black/5 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
           title="Votar não relevante"
         >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
+          <ChevronDown class="w-4 h-4" />
         </button>
       </template>
     </div>
@@ -77,14 +53,18 @@
       <div class="comment-meta text-sm text-zinc-400 flex items-center gap-2 flex-wrap">
         <Link
           :href="`/@${comment.user.username}`"
-          class="text-[#58a6ff] hover:underline bg-[#002d56]/20 px-1.5 py-0.5 rounded font-mono text-xs transition duration-150"
+          class="inline-block bg-emerald-900/10 dark:bg-emerald-900/20 text-zinc-700 dark:text-zinc-400 font-mono text-xs px-1.5 py-0.5 rounded-md no-underline whitespace-nowrap break-words"
         >
-          @{{ comment.user.username }}
+          <span
+            class="font-mono text-xs text-emerald-600 no-underline underline-offset-1 whitespace-nowrap break-words italic-0 shadow-none outline-none not-italic"
+          >
+            @{{ comment.user.username }}
+          </span>
         </Link>
 
         <span
           v-if="comment.user.id === article.user.id"
-          class="bg-zinc-800 text-zinc-300 border border-zinc-700 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase"
+          class="dark:bg-emerald-900/10 bg-emerald-100/10 dark:text-emerald-400 text-emerald-500 border dark:border-emerald-700 border-emerald-500 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase"
         >
           Autor
         </span>
@@ -98,19 +78,6 @@
             @click="destroyComment"
             class="text-sm text-zinc-400 flex items-center gap-1 justify-center cursor-pointer hover:text-red-500 transition-colors duration-200"
           >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
             Excluir comentário
           </button>
         </template>
@@ -146,19 +113,7 @@
             class="bg-zinc-100 hover:bg-zinc-200 dark:bg-[#21262d] dark:hover:bg-[#30363d] text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-[#30363d] hover:border-zinc-400 dark:hover:border-zinc-500 rounded p-1.5 text-xs font-semibold flex items-center justify-center transition-all duration-150 cursor-pointer"
             title="Compartilhar"
           >
-            <svg
-              class="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9 12l3-3m0 0l3 3m-3-3v12M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <Share2 class="w-3.5 h-3.5" />
           </button>
           <span
             v-if="copiedCommentLink"
@@ -205,7 +160,7 @@
         <template v-if="comment.children && comment.children.length > 0">
           <div
             v-if="!repliesCollapsed"
-            class="mt-6 flex gap-4 -ml-12"
+            :class="comment.depth > 0 ? 'mt-12 flex gap-4 -ml-12' : 'mt-4 flex gap-4 -ml-12'"
           >
             <!-- Interactive Dotted Thread Line Column (width w-8, centered) -->
             <div
@@ -226,41 +181,9 @@
 
               <!-- Double-arrow dotted icon appearing at the top of the line on hover -->
               <div
-                class="opacity-0 group-hover:opacity-100 absolute -top-1 z-10 flex items-center justify-center bg-white dark:bg-[#0d1117] text-red-500 transition-opacity duration-150 rounded-full border border-red-500 p-0.5 shadow-sm"
+                class="opacity-0 group-hover:opacity-100 absolute z-10 flex items-center justify-center bg-white dark:bg-[#0d1117] text-red-500 transition-opacity duration-150 rounded-full border border-red-500 p-0.5 shadow-sm"
               >
-                <svg
-                  class="w-4 h-4"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M10 3l3 4H7l3-4z" />
-                  <circle
-                    cx="6"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="8"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="10"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="12"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="14"
-                    cy="10"
-                    r="1"
-                  />
-                  <path d="M10 17l-3-4h6l-3 4z" />
-                </svg>
+                <ChevronsUpDown class="w-4 h-4" />
               </div>
             </div>
 
@@ -286,39 +209,7 @@
             >
               <!-- Blue double-arrow dotted icon -->
               <span class="text-sky-500 group-hover:scale-110 transition-transform">
-                <svg
-                  class="w-5 h-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M10 3l3 4H7l3-4z" />
-                  <circle
-                    cx="6"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="8"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="10"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="12"
-                    cy="10"
-                    r="1"
-                  />
-                  <circle
-                    cx="14"
-                    cy="10"
-                    r="1"
-                  />
-                  <path d="M10 17l-3-4h6l-3 4z" />
-                </svg>
+                <ChevronsUpDown class="w-5 h-5" />
               </span>
               Ver mais {{ totalRepliesCount }} {{ totalRepliesCount === 1 ? 'resposta' : 'respostas' }}
             </button>
@@ -332,6 +223,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import { ChevronUp, ChevronDown, Share2, ChevronsUpDown } from '@lucide/vue';
 import { timeAgo } from '../utils';
 import MarkdownField from './MarkdownField.vue';
 import Comment from './Comment.vue'; // self import

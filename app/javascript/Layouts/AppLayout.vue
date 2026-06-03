@@ -12,19 +12,10 @@
           href="/"
           class="flex shrink-0 items-center gap-2 font-semibold tracking-tight text-white hover:text-emerald-400 transition-all duration-200 transform hover:scale-105"
         >
-          <svg
+          <Folder
             class="h-6 w-6 text-emerald-400 filter drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]"
-            fill="none"
-            viewBox="0 0 24 24"
             stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
-            />
-          </svg>
+          />
           <span
             class="text-xl font-bold bg-gradient-to-r from-white via-zinc-200 to-emerald-400 bg-clip-text text-transparent"
           >Blog</span>
@@ -54,19 +45,10 @@
         <div class="order-last w-full sm:order-none sm:mx-4 sm:flex-1 sm:max-w-md">
           <div class="relative">
             <span class="sr-only">Pesquisar</span>
-            <svg
+            <Search
               class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
-              fill="none"
-              viewBox="0 0 24 24"
               stroke-width="1.5"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-              />
-            </svg>
+            />
             <input
               type="search"
               placeholder="Pesquisar"
@@ -85,34 +67,16 @@
             class="rounded-lg p-2 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
             aria-label="Alternar tema"
           >
-            <svg
+            <Sun
               v-if="isDark"
               class="h-5 w-5 text-yellow-400"
-              fill="none"
-              viewBox="0 0 24 24"
               stroke-width="1.5"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-              />
-            </svg>
-            <svg
+            />
+            <Moon
               v-else
               class="h-5 w-5 hover:text-indigo-400 transition-colors"
-              fill="none"
-              viewBox="0 0 24 24"
               stroke-width="1.5"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
-              />
-            </svg>
+            />
           </button>
 
           <!-- User session section -->
@@ -161,37 +125,17 @@
       v-if="showNotice && flash.notice"
       class="border-b border-emerald-200 bg-emerald-50 px-4 py-2.5 text-center text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/80 dark:text-emerald-200 flex items-center justify-center gap-2 animate-fade-in"
     >
-      <svg
+      <CheckCircle
         class="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
+      />
       <span class="font-medium">{{ flash.notice }}</span>
       <button
         @click="showNotice = false"
         class="ml-2 hover:opacity-80 p-0.5 rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-900 transition-colors"
       >
-        <svg
+        <X
           class="w-3.5 h-3.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        />
       </button>
     </div>
 
@@ -199,37 +143,17 @@
       v-if="showAlert && flash.alert"
       class="border-b border-red-200 bg-red-50 px-4 py-2.5 text-center text-sm text-red-800 dark:border-red-900 dark:bg-red-950/80 dark:text-red-200 flex items-center justify-center gap-2 animate-fade-in"
     >
-      <svg
+      <AlertTriangle
         class="h-4 w-4 text-red-600 dark:text-red-400 shrink-0"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
-      </svg>
+      />
       <span class="font-medium">{{ flash.alert }}</span>
       <button
         @click="showAlert = false"
         class="ml-2 hover:opacity-80 p-0.5 rounded-full hover:bg-red-200 dark:hover:bg-red-900 transition-colors"
       >
-        <svg
+        <X
           class="w-3.5 h-3.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        />
       </button>
     </div>
 
@@ -243,6 +167,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
+import { Folder, Search, Sun, Moon, CheckCircle, X, AlertTriangle } from '@lucide/vue'
 
 const props = defineProps({
   mainClass: {

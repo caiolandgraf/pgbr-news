@@ -41,9 +41,7 @@
         <label for="email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">E-mail</label>
         <div class="flex overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/30 dark:border-zinc-700 dark:bg-zinc-900">
           <span class="flex items-center pl-3 text-zinc-400 dark:text-zinc-500" aria-hidden="true">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-            </svg>
+            <Mail class="h-5 w-5" stroke-width="1.5" />
           </span>
           <input 
             id="email"
@@ -137,6 +135,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useForm, Link } from '@inertiajs/vue3'
+import { Mail } from '@lucide/vue'
 import AuthShell from '../../Components/AuthShell.vue'
 
 const props = defineProps({

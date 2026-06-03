@@ -15,9 +15,7 @@
           class="text-sm text-zinc-500 rounded-lg p-2 hover:dark:bg-white/5 hover:bg-black/5 transition cursor-pointer flex items-center gap-2 justify-center"
           aria-label="Votar positivo"
         >
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m18 15-6-6-6 6" />
-          </svg>
+          <ChevronUp class="w-4 h-4" />
         </button>
 
         <div class="relative group cursor-help flex justify-center items-center">
@@ -34,9 +32,7 @@
           class="text-sm text-zinc-500 rounded-lg p-2 hover:dark:bg-white/5 hover:bg-black/5 transition cursor-pointer flex items-center gap-2 justify-center"
           aria-label="Votar negativo"
         >
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
-          </svg>
+          <ChevronDown class="w-4 h-4" />
         </button>
 
         <div class="w-[2px] h-full dark:bg-white/10 bg-black/10 rounded-full"></div>
@@ -75,24 +71,18 @@
     <!-- Actions bar -->
     <div class="mt-10 flex flex-wrap gap-3 border-t border-zinc-200 pt-6 dark:border-zinc-800 animate-fade-in">
       <Link href="/" class="text-sm rounded-lg border border-emerald-500 text-emerald-500 px-3 py-1.5 hover:bg-emerald-500 hover:text-white transition duration-200 cursor-pointer flex items-center gap-2 justify-center">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m12 19-7-7 7-7m14 7H5" />
-        </svg>
+        <ArrowLeft class="w-4 h-4" />
         Voltar
       </Link>
 
       <template v-if="currentUser && currentUser.id === article.user.id">
         <Link :href="`/@${article.user.username}/${article.slug}/edit`" class="text-sm border border-blue-500 rounded-lg bg-blue-500 text-white px-3 py-1.5 hover:bg-blue-400 hover:border-blue-400 transition duration-200 cursor-pointer flex items-center gap-2 justify-center">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-          </svg>
+          <Pencil class="w-4 h-4" />
           Editar
         </Link>
         
         <button @click="destroyArticle" class="text-sm border border-red-500 rounded-lg bg-red-500 text-white px-3 py-1.5 hover:bg-red-400 hover:border-red-400 transition duration-200 cursor-pointer flex items-center gap-2 justify-center">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
+          <Trash2 class="w-4 h-4" />
           Excluir
         </button>
       </template>
@@ -120,9 +110,7 @@
             class="bg-zinc-100 hover:bg-zinc-200 dark:bg-[#21262d] dark:hover:bg-[#30363d] text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-[#30363d] hover:border-zinc-400 dark:hover:border-zinc-500 rounded p-1.5 text-xs font-semibold flex items-center justify-center transition-all duration-150 cursor-pointer"
             title="Compartilhar"
           >
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l3-3m0 0l3 3m-3-3v12M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <Share2 class="w-3.5 h-3.5" />
           </button>
           <span v-if="copiedArticleLink" class="text-xs text-emerald-500 flex items-center animate-fade-in">
             Link copiado!
@@ -172,6 +160,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
+import { ChevronUp, ChevronDown, ArrowLeft, Pencil, Trash2, Share2 } from '@lucide/vue'
 import AppLayout from '../../Layouts/AppLayout.vue'
 import MarkdownViewer from '../../Components/MarkdownViewer.vue'
 import MarkdownField from '../../Components/MarkdownField.vue'
