@@ -72,7 +72,7 @@ gem "bcrypt", "~> 3.1"
 
 gem "lucide-rails", "~> 0.7.4"
 
-gem "rubocop", "~> 1.86"
+gem "rubocop", "~> 1.87"
 
 gem "rubocop-rails", "~> 2.35"
 
