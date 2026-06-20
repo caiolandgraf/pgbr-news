@@ -67,7 +67,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "tailwindcss-rails", "~> 4.4"
+gem "tailwindcss-rails", "~> 4.6"
 gem "bcrypt", "~> 3.1"
 
 gem "lucide-rails", "~> 0.7.4"
